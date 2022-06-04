@@ -103,24 +103,17 @@ def create_app():
                         worth = entry[2], category = entry[3],
                         citizenship = entry[4], gender = entry[5],
                         connectedTo = [])
-                                # graph will add vertex using the primary key
-
                     b.save()
-
                 else:
                     c += 1
             return(f'''Database successfully loaded {ldf//25 - c}
                    docs and removed {c} duplicates''')
         return 'Database is up to date'
 
-
-
     @app.route('/drop_database')
     def drop_database():
         Billionaire.drop_collection()
         return 'Database has been wiped'
-
-
 
     @app.route('/view_graph')
     def view_graph():
@@ -129,7 +122,6 @@ def create_app():
         return str([b.name for b in Billionaire.objects(name = 'Larry Page')[
             0].connectedTo]) + str([b.name for b in qb2.connectedTo]) + str(
             [b.name for b in qb3.connectedTo])
-        # return mygraph.__str__()
 
     @app.route('/alter_friends')
     def alter_friends():
@@ -139,28 +131,20 @@ def create_app():
         qb2 = Billionaire.objects(name = 'Mark Zuckerberg')[0]
         qb3 = Billionaire.objects(name = 'Miriam Adelson')[0]
         qb4 = Billionaire.objects(name = 'Guillaume Pousaz')[0]
-        # print(mygraph.billList.keys())
-        # mygraph.addEdge(querybill, qb2)
 
         querybill.add_connection(qb2)
-        # querybill.connectedTo.pop()
         qb2.add_connection(qb3)
         qb3.add_connection(qb4)
-        # querybill.add_connection(qb2)
-        # mygraph.addEdge(mygraph.billList[querybill.bill_id], mygraph.billList[qb2.bill_id])
             
-        querybill.save() # check if this is causing error <------
+        querybill.save()
         qb2.save()
         qb3.save()
 
-
-            # return f'added connection between {querybill.name} and {qb2.name}'
         return str([b.name for b in querybill.connectedTo]) + str(
             [b.name for b in qb2.connectedTo]) + str([b.name for b in qb3.connectedTo])
 
     @app.route('/add_friend')
     def add_friend():
-
         return 'hello'
         
     @app.route('/bfs')
@@ -171,9 +155,7 @@ def create_app():
             graph.addBillionaire(bill)
         larry_p = Billionaire.objects(name = 'Larry Page')[0]
         visited, layers = breadthFirstSearch(graph, larry_p)
-
         return str(layers)
-
 
     print('Billionaires:', Billionaire.objects.count())
 
