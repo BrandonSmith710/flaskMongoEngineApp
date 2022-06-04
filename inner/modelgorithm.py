@@ -29,6 +29,7 @@ class Billionaire(me.Document):
             'citizenship': self.citizenship,
             'gender': self.gender
             }
+    
 class Graph:
     def __init__(self):
         self.billList = {}
