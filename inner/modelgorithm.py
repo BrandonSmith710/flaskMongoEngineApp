@@ -43,15 +43,19 @@ class Graph:
   
     def __iter__(self):
         return iter(self.billList.values())
+    
     def __contains__(self, n):
-        return n in self.billList 
+        return n in self.billList
+    
     def __str__(self):
         return str({s.name: str(s.get_connections()) for s in self.billList.values()})
+    
     def getBillionaire(self, n):
         if n in self.billList:
             return self.billList[n]
         else:
             return None
+        
     def getBillionaires(self):
         return self.billList.keys()
 
