@@ -55,9 +55,7 @@ class Graph:
     def getBillionaires(self):
         return self.billList.keys()
 
-# bills = Billionaires.objects()
-# bill_vertices = {y.name: set(y.connectedTo) for y in bills} 
-# graph will be {y.name: set(y.connectedTo) for y in mygraph}
+
 def breadthFirstSearch(graph, start):
     '''
     graph - graph containing vertices which may have connections to other vertices
@@ -72,7 +70,6 @@ def breadthFirstSearch(graph, start):
         vertex = queue.popleft()
         if vertex not in visited:
             visited.add(vertex)
-        # enqueue everything in vertex's adjacency list that isn't already in visited
         circle_of_friends = set(vertex.get_connections()) - visited
         queue.extend(circle_of_friends)
         layers[c] = [f.name for f in circle_of_friends]
