@@ -83,7 +83,6 @@ def create_app():
 
         if not Billionaire.objects().count():
             c = 0
-            # billionaire_list = []
             df = pd.read_csv('forbes_2022_billionaires.csv')
             feats = '''personName age finalWorth category
                        countryOfCitizenship gender'''.split()
@@ -92,9 +91,8 @@ def create_app():
             df['finalWorth'] = df['finalWorth'].astype(int) * 1000000
             ldf = len(df)
 
-            for x in range(ldf//25):
+            for x in range(ldf//10):
                 entry = df.iloc[x].values
-                # if not x in billionaire_list:
                 if not Billionaire.objects(
                     name__icontains = entry[0]
                     ).count():
@@ -106,7 +104,7 @@ def create_app():
                     b.save()
                 else:
                     c += 1
-            return(f'''Database successfully loaded {ldf//25 - c}
+            return(f'''Database successfully loaded {ldf//10 - c}
                    docs and removed {c} duplicates''')
         return 'Database is up to date'
 
@@ -117,47 +115,91 @@ def create_app():
 
     @app.route('/view_graph')
     def view_graph():
-        qb2 = Billionaire.objects(name = 'Mark Zuckerberg')[0]
-        qb3 = Billionaire.objects(name = 'Miriam Adelson')[0]
-        return str([b.name for b in Billionaire.objects(name = 'Larry Page')[
-            0].connectedTo]) + str([b.name for b in qb2.connectedTo]) + str(
-            [b.name for b in qb3.connectedTo])
+        return str([b.name for b in Billionaire.objects()][:40])
 
-    @app.route('/alter_friends')
-    def alter_friends():
+
+    @app.route('/add_friend', methods = ['POST', 'GET'])
+    def add_friend():
+        if request.method == 'POST':
+            f1 = request.form.get('search2')
+            f2 = request.form.get('search3')
+
+            f1o = Billionaire.objects(name = f1)[0]
+            f2o = Billionaire.objects(name = f2)[0]
+
+            if f1o and f2o:
+                if not f2o in f1o.get_connections():
+                    f1o.add_connection(f2o)
+                    f1o.save()
+                    answer = f'{f1o.name} is now friends with {f2o.name}'
+                else:
+                    answer = f'{f1o.name} is already friends with {f2o.name}'
+
+                return render_template('results2.html', answer = answer)
+            
+            
+        return render_template('base2.html')
         
+    @app.route('/bfs')
+    def bfs():
         querybill = Billionaire.objects(name = 'Larry Page')[0]
-        print((querybill.name, querybill.bill_id))
+        qb2 = Billionaire.objects(name = 'Mark Zuckerberg')[0]
+        qb25 = Billionaire.objects(name = 'Bill Gates')[0]
+        qb3 = Billionaire.objects(name = 'Miriam Adelson')[0]
+        qb35 = Billionaire.objects(name = 'Robin Zeng')[0]
+        qb4 = Billionaire.objects(name = 'Guillaume Pousaz')[0]
+        qb45 = Billionaire.objects(name = 'Klaus-Michael Kuehne')[0]
+        qb46 = Billionaire.objects(name = 'Julia Koch & family')[0]
+        qb5 = Billionaire.objects(name = 'Lee Shau Kee')[0]
+        qb55 = Billionaire.objects(name = 'Mukesh Ambani')[0]
+        qb56 = Billionaire.objects(name = 'Warren Buffett')[0]
+        qb57 = Billionaire.objects(name = 'Michael Bloomberg')[0]
+        graph = Graph()
+        bills = Billionaire.objects()
+        for bill in bills:
+            graph.addBillionaire(bill)
+        graph.addEdge(querybill, qb2)
+        graph.addEdge(querybill, qb25)
+        graph.addEdge(qb2, qb3)
+        graph.addEdge(qb2, qb35)
+        graph.addEdge(qb3, qb4)
+        graph.addEdge(qb3, qb45)
+        graph.addEdge(qb3, qb46)
+        graph.addEdge(qb4, qb5)
+        graph.addEdge(qb4, qb55)
+        graph.addEdge(qb4, qb56)
+        graph.addEdge(qb4, qb57)
+        querybill.add_connection(qb2)
+        querybill.add_connection(qb25)
+        querybill.save()
+        qb2.add_connection(qb3)
+        qb2.add_connection(qb35)
+        qb2.save()
+        qb3.add_connection(qb4)
+        qb3.add_connection(qb45)
+        qb3.add_connection(qb46)
+        qb3.save()
+        qb4.add_connection(qb5)
+        qb4.add_connection(qb55)
+        qb4.add_connection(qb56)
+        qb4.add_connection(qb57)
+        qb4.save()
+        visited, layers = breadthFirstSearch(graph, querybill)
+        return layers
+
+    print('Billionaires:', Billionaire.objects.count())
+
+    @app.route('/display_friends')
+    def display_friends():
+
+        querybill = Billionaire.objects(name = 'Larry Page')[0]
         qb2 = Billionaire.objects(name = 'Mark Zuckerberg')[0]
         qb3 = Billionaire.objects(name = 'Miriam Adelson')[0]
         qb4 = Billionaire.objects(name = 'Guillaume Pousaz')[0]
 
-        querybill.add_connection(qb2)
-        qb2.add_connection(qb3)
-        qb3.add_connection(qb4)
-            
-        querybill.save()
-        qb2.save()
-        qb3.save()
+        return str([b.name for b in querybill.connectedTo]) + str([b.name for b in 
+        qb2.connectedTo]) + str([b.name for b in qb3.connectedTo]) + str(
+        [b.name for b in qb4.connectedTo])
 
-        return str([b.name for b in querybill.connectedTo]) + str(
-            [b.name for b in qb2.connectedTo]) + str([b.name for b in qb3.connectedTo])
-
-    @app.route('/add_friend')
-    def add_friend():
-        return 'hello'
-        
-    @app.route('/bfs')
-    def bfs():
-        graph = Graph()
-        bill_list = Billionaire.objects()
-        for bill in bill_list:
-            graph.addBillionaire(bill)
-        larry_p = Billionaire.objects(name = 'Larry Page')[0]
-        visited, layers = breadthFirstSearch(graph, larry_p)
-        return str(layers)
-
-    print('Billionaires:', Billionaire.objects.count())
-
-    db.disconnect(alias=DB_URI)
+    db.disconnect(alias = DB_URI)
     return app
