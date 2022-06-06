@@ -50,7 +50,7 @@ class Graph:
 
     def __str__(self):
         return str({s.name: str(
-          s.get_connections()) for s in self.billList.values()})
+          s.get_connections()) for s in self})
         
     def getBillionaire(self, n):
         if n in self.billList:
