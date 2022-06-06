@@ -1,5 +1,5 @@
 # flaskMongoEngineApp
-This repository features a MongoDB database and Flask API, which were built using the flask-mongoengine ODM, and allow you to load a csv file of billionaires into a database, then query the documents by net worth or country of citizenship. You can also optionally delete the entire collection.
+This repository features a MongoDB database interface, which was built using the flask-mongoengine ODM, and allows you to load a csv file of billionaires into a database, then query the documents by net worth or country of citizenship. You can also perform a breadth first search on documents, which uses a graph structure to find all documents which are connected to the query document in any way. Additionally delete documents or the entire collection.
 
 Installation Instructions
 
