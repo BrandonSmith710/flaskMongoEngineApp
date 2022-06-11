@@ -175,9 +175,9 @@ def create_app():
     
     @app.route('/network_search', methods = ['POST', 'GET'])
     def network_search():
-        '''Enter the name of an existing user, then a
-           dictionary containing all levels of connections
-           is returned.'''
+        '''This route requests the name of an existing user, and
+           returns a dictionary containing all levels of connections.
+           '''
 
            
         graph = Graph()
