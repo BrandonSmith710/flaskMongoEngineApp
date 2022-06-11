@@ -316,6 +316,5 @@ def create_app():
         visited, layers = breadthFirstSearch(graph, querybill)
         return layers
 
-    print('Billionaires:', Billionaire.objects.count())
     db.disconnect(alias = DB_URI)
     return app
