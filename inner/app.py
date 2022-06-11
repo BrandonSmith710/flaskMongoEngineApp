@@ -189,9 +189,6 @@ def create_app():
                 return redirect(url_for('network_search'))
             for bill in Billionaire.objects():
                 graph.addBillionaire(bill)
-            for bill in f1.get_connections():
-                graph.addEdge(f1, bill)
-                f1.save()
             visited, layers = breadthFirstSearch(graph, f1)
             return layers
         return render_template('base4.html')
