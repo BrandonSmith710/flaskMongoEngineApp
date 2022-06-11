@@ -11,11 +11,17 @@ class Billionaire(me.Document):
     gender = me.StringField(required = True)
     connectedTo = me.ListField()
 
-    def add_connection(self, newPartner):
-        self.connectedTo.append(newPartner)
+    def add_connection(self, newFriend):
+        if newFriend not in self.connectedTo:
+            self.connectedTo.append(newFriend)
+            return True
+        return False
         
     def get_connections(self):
         return self.connectedTo
+    
+    def del_connection(self, oldFriend):
+        self.connectedTo.remove(oldFriend)
 
     def __str__(self):
         return str(self.name) + ': '+ str(self.worth)
@@ -39,8 +45,19 @@ class Graph:
         return newBill
 
     def addEdge(self, f, t):
-        'forms a connection between first and second vertices'
+        '''forms a connection between first and
+           second vertices'''
+
         self.billList[f.name].add_connection(t)
+    
+    def getBillionaire(self, n):
+        if n in self.billList:
+            return self.billList[n]
+        else:
+            return None
+
+    def getBillionaires(self):
+        return self.billList.keys()
   
     def __iter__(self):
         return iter(self.billList.values())
@@ -51,18 +68,10 @@ class Graph:
     def __str__(self):
         return str({s.name: str(
           s.get_connections()) for s in self})
-        
-    def getBillionaire(self, n):
-        if n in self.billList:
-            return self.billList[n]
-        else:
-            return None
-    def getBillionaires(self):
-        return self.billList.keys()
 
 
 def bfs_paths(graph, start, goal):
-    '''accepts start and end, existing vertices in graph,
+    '''accepts existing graph vertices start and end,
        generates paths from start vertex to end vertex'''
        
 
@@ -75,7 +84,6 @@ def bfs_paths(graph, start, goal):
                 yield [x.name for x in path] + [next.name]
             else:
                 queue.append((next, path + [next]))
-
 
 def shortest_path(graph, start, goal):
     try:
