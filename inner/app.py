@@ -229,7 +229,7 @@ def create_app():
             df['finalWorth'] = df['finalWorth'].astype(int) * 1000000
             ldf = len(df)
 
-            for x in range(ldf//10):
+            for x in range(ldf):
                 entry = df.iloc[x].values
                 if not Billionaire.objects(
                     name__icontains = entry[0]
@@ -242,7 +242,7 @@ def create_app():
                     b.save()
                 else:
                     c += 1
-            return(f'''Database successfully loaded {ldf//10 - c}
+            return(f'''Database successfully loaded {ldf - c}
                    docs and removed {c} duplicates''')
         return 'Database is up to date'
 
