@@ -69,7 +69,6 @@ class Graph:
         return str({s.name: str(
           s.get_connections()) for s in self})
 
-
 def bfs_paths(graph, start, goal):
     '''accepts existing graph vertices start and end,
        generates paths from start vertex to end vertex'''
